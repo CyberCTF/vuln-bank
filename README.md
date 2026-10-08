@@ -21,7 +21,7 @@ set, and the lab sets none (the network has no internet access).
 
 ```bash
 isoloom generate
-isoloom up docker
+isoloom run docker
 ```
 
 Then open http://localhost:5000/. The same spec runs as Docker on a local VM (`docker-vm`), on a
