@@ -1,0 +1,42 @@
+# yaml-language-server: $schema=https://www.isoloom.com/schema/v1.json
+# Vulnerable Bank (by Al-Amir Badmus, Commando-X) as an Isoloom spec: the Flask banking
+# application, vendored unchanged in build/web/app/, built by its own Dockerfile (database host
+# and dependency date baked in), and its PostgreSQL database.
+# `isoloom generate`, then `isoloom up docker`.
+version: 1
+name: vuln-bank
+
+networks:
+  lab: { cidr: 10.60.17.0/24, internet: false }
+
+machines:
+  db:
+    networks: { lab: 20 }
+    services: [{ port: 5432, name: postgres }]
+    resources: { cpus: 1, memory_mb: 512 }
+    docker:
+      build: build/db
+
+  web:
+    networks: { lab: 10 }
+    services: [{ port: 5000, name: web, http: true, publish: 5000 }]
+    depends_on: [db]
+    resources: { cpus: 1, memory_mb: 512 }
+    docker:
+      build: build/web
+
+checks:
+  - name: the bank answers
+    http: http://web:5000/
+    wait: 180
+  - name: the health endpoint reaches the database
+    http: http://web:5000/healthz
+  - name: the login page answers
+    http: http://web:5000/login
+  - name: the API documentation is served
+    http: http://web:5000/api/docs/
+
+message: |
+  Vulnerable Bank answers at http://localhost:{{ machines.web.services.0.publish }}/ and its API
+  documentation at /api/docs/. Register an account, then look for ways to reach other
+  customers' money, data and the admin panel.
