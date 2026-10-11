@@ -1,7 +1,7 @@
 {
   "title": "Vulnerable Bank",
   "description": "A deliberately vulnerable banking application with a web front end, REST and GraphQL APIs and an AI support chat: SQL injection, broken authentication and JWT flaws, IDOR and BOLA, race conditions on transfers, SSRF, file upload and prompt injection.",
-  "question": "Take over other customers' accounts and money, and reach the admin panel.",
+  "question": "Use one of the bank's SQL injections to read the flag in the flags table of its database.",
   "category": "WEB",
   "difficulty": 2,
   "evidence_kind": "SECRET"

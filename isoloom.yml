@@ -6,6 +6,9 @@
 version: 1
 name: vuln-bank
 
+# Given by the CyberCTF launcher: this player's flag. Without it the development flag.
+inputs: [CTF_FLAG_MAIN]
+
 networks:
   lab: { cidr: 10.60.17.0/24, internet: false }
 
@@ -14,8 +17,10 @@ machines:
     networks: { lab: 20 }
     services: [{ port: 5432, name: postgres }]
     resources: { cpus: 1, memory_mb: 512 }
+    inputs: [CTF_FLAG_MAIN]
     docker:
       build: build/db
+      init: [ctf/flag.sh]
 
   web:
     networks: { lab: 10 }

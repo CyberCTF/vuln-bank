@@ -1,0 +1,41 @@
+{
+  "objectives": [
+    {
+      "key": "main",
+      "title": "Read the flag",
+      "prompt": "Use one of the bank's SQL injections to read the flag stored in the flags table of its database.",
+      "check": { "evidence": "SECRET", "format": "FLAG{%s}" },
+      "dev": "FLAG{dev-vuln-bank}",
+      "hints": [
+        "The login form builds its query with string formatting, and so does a balance lookup that takes an account number in the URL.",
+        "The balance lookup prints the columns it selects: rows from another table can ride along."
+      ],
+      "steps": [
+        {
+          "key": "endpoint",
+          "title": "Find the endpoint",
+          "prompt": "Which URL path checks an account's balance from an account number in the path? (its first segment)",
+          "check": { "answer": ["check_balance", "/check_balance"] }
+        },
+        {
+          "key": "dbms",
+          "title": "Identify the database",
+          "prompt": "Which database server does the bank use? (name only)",
+          "check": { "answer": ["postgresql", "postgres"] }
+        },
+        {
+          "key": "technique",
+          "title": "Pick the technique",
+          "prompt": "Which SQL operator appends rows from another table to the lookup's result?",
+          "check": { "answer": ["union", "union select"] }
+        },
+        {
+          "key": "catalogue",
+          "title": "Enumerate the tables",
+          "prompt": "Which standard schema lists the tables of the database, including flags?",
+          "check": { "answer": ["information_schema", "information schema", "pg_catalog"] }
+        }
+      ]
+    }
+  ]
+}

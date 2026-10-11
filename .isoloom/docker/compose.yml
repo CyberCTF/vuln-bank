@@ -18,6 +18,8 @@ services:
     networks:
       lab:
         ipv4_address: 10.60.17.20
+    environment:
+      CTF_FLAG_MAIN: ${CTF_FLAG_MAIN:-}
     healthcheck:
       test:
       - CMD
@@ -67,6 +69,25 @@ services:
     labels:
       isoloom.managed: 'true'
       isoloom.environment: vuln-bank
+  db-init-1:
+    image: isoloom/vuln-bank-db
+    entrypoint:
+    - /bin/sh
+    - /isoloom/init/flag.sh
+    volumes:
+    - ../../ctf/flag.sh:/isoloom/init/flag.sh:ro
+    network_mode: service:db
+    environment:
+      CTF_FLAG_MAIN: ${CTF_FLAG_MAIN:-}
+    depends_on:
+      db:
+        condition: service_healthy
+      db-routes:
+        condition: service_healthy
+    restart: no
+    labels:
+      isoloom.managed: 'true'
+      isoloom.environment: vuln-bank
   web:
     build:
       context: ../../build/web
@@ -99,6 +120,8 @@ services:
         condition: service_completed_successfully
       db:
         condition: service_healthy
+      db-init-1:
+        condition: service_completed_successfully
       db-routes:
         condition: service_healthy
     deploy:
@@ -152,6 +175,8 @@ services:
     depends_on:
       db:
         condition: service_healthy
+      db-init-1:
+        condition: service_completed_successfully
       db-routes:
         condition: service_healthy
       web:
@@ -174,6 +199,8 @@ services:
     depends_on:
       db:
         condition: service_healthy
+      db-init-1:
+        condition: service_completed_successfully
       db-routes:
         condition: service_healthy
       web:
@@ -196,6 +223,8 @@ services:
     depends_on:
       db:
         condition: service_healthy
+      db-init-1:
+        condition: service_completed_successfully
       db-routes:
         condition: service_healthy
       web:
