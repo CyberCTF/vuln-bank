@@ -7,29 +7,38 @@ version: 1
 name: vuln-bank
 
 # Given by the CyberCTF launcher: this player's flag. Without it the development flag.
-inputs: [CTF_FLAG_MAIN]
+inputs:
+  CTF_FLAG_MAIN: {}
 
 networks:
-  lab: { cidr: 10.60.17.0/24, internet: false }
+  lab: {cidr: 10.60.17.0/24, internet: false}
 
 machines:
   db:
-    networks: { lab: 20 }
-    services: [{ port: 5432, name: postgres }]
-    resources: { cpus: 1, memory_mb: 512 }
-    inputs: [CTF_FLAG_MAIN]
-    docker:
+    networks: {lab: 20}
+    resources: {cpus: 1, memory_mb: 512}
+    ports:
+      postgres:
+        port: 5432
+    files:
+      - path: /run/lab/ctf_flag_main
+        input: CTF_FLAG_MAIN
+    setup:
+      - ctf/flag.sh
+    app:
       build: build/db
-      init: [ctf/flag.sh]
 
   web:
-    networks: { lab: 10 }
-    services: [{ port: 5000, name: web, http: true, publish: 5000 }]
+    networks: {lab: 10}
     depends_on: [db]
-    resources: { cpus: 1, memory_mb: 512 }
-    docker:
+    resources: {cpus: 1, memory_mb: 512}
+    ports:
+      web:
+        port: 5000
+        protocol: http
+        publish: true
+    app:
       build: build/web
-
 checks:
   - name: the bank answers
     http: http://web:5000/
@@ -42,6 +51,6 @@ checks:
     http: http://web:5000/api/docs/
 
 message: |
-  Vulnerable Bank answers at http://localhost:{{ machines.web.services.0.publish }}/ and its API
+  Vulnerable Bank answers at {{ machines.web.ports.web.url }} and its API
   documentation at /api/docs/. Register an account, then look for ways to reach other
   customers' money, data and the admin panel.

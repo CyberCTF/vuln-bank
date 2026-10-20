@@ -1,8 +1,11 @@
 {
+  "project_name": "cyberlabs-vuln-bank",
+  "slug": "vuln-bank",
   "title": "Vulnerable Bank",
   "description": "A deliberately vulnerable banking application with a web front end, REST and GraphQL APIs and an AI support chat: SQL injection, broken authentication and JWT flaws, IDOR and BOLA, race conditions on transfers, SSRF, file upload and prompt injection.",
-  "question": "Use one of the bank's SQL injections to read the flag in the flags table of its database.",
-  "category": "WEB",
+  "category": "web",
   "difficulty": 2,
-  "evidence_kind": "SECRET"
+  "evidence_kind": "SECRET",
+  "capabilities": [],
+  "question": "Use one of the bank's SQL injections to read the flag in the flags table of its database."
 }
